@@ -2,18 +2,102 @@ import numpy as np
 from timeit import Timer
 from coordinates import Coordinate
 
+a = Coordinate(x= 16, y= 5)
+b = Coordinate(x= 5, y= -3)
+c = Coordinate(x= 14, y= 1)
+d = Coordinate(x= 2, y= 8)
+e = Coordinate(x= -3, y= 4)
+f = Coordinate(x= 15, y= 13)
+g = Coordinate(x= 5.65, y= 3.1)
+h = Coordinate(x=-15, y=-20)
 
-a = Coordinate(x=4, y=3)
-b = Coordinate(x=8, y=-4)
-c = Coordinate(x=12, y=-1)
-d = Coordinate(x=0, y=-3)
-e = Coordinate(x=7, y=9)
-f = Coordinate(x=2, y=-5)
-g = Coordinate(x= 4.5, y= 2.5)
 
-points = [a, b, c, d, e, f, g]
-# x, y = symbols('x, y')
 
+
+points = [a,b,c,d,e,f,g,h]
+
+x_coords = []
+y_coords = []
+for point in points:
+    x_coords.append(point['x'])
+    y_coords.append(point['y'])
+
+centroid_x = float(sum(x_coords)/len(points))
+centroid_y = float(sum(y_coords)/len(points))
+
+centroid = Coordinate(x=centroid_x, y=centroid_y)
+print(f'Centroid is: {centroid['x'], centroid['y']}')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
 def insertion_sort(arr, axis):
     # Use an insertion algorithm
     for j in range(len(arr)):
@@ -35,12 +119,13 @@ def insertion_sort(arr, axis):
     # Return the sorted array
     return(arr)
 
-def merge_points(points):
-    multiplier = float(0.05)
-    ''' The order of creating the list is very important
-        since the arrays always change when refered to later
-        in the code '''
+def merge_points(points, multiplier): 
+    #The order of creating the list is very important
+    #since the arrays always change when refered to later
+    #in the code 
+
     y_values = insertion_sort(points, 'y')
+    y_scale = abs(multiplier * float(y_values[-1]['y'] - y_values[0]['y']))
 
     # Created second, so now points will be arranged according to x-axis
     # Ideally, just call insertion_sort evertime to stay safe
@@ -51,7 +136,6 @@ def merge_points(points):
     # Multiplier is 5% of the total range, the scale by which I decide if 2 points are too close
 
     x_scale = abs(multiplier * float(x_values[-1]['x'] - x_values[0]['x']))
-    y_scale = abs(multiplier * float(y_values[-1]['y'] - y_values[0]['y']))
 
     # Create an empty merged list and set merged status to false default
     merged_list = []
@@ -76,20 +160,8 @@ def merge_points(points):
             y_diff = abs(float(point - start))
 
             if y_diff <= y_scale:
-                # If y < 5% too, find midpoint
-                x1 = float(x_values[j]['x'])
-                x2 = float(x_values[j + 1]['x'])
-                y1 = float(x_values[j]['y'])
-                y2 = float(x_values[j + 1]['y'])
-
-                # Midpoint formula
-                x_new = (x1 + x2)/2.0
-                y_new = (y1 + y2)/2.0
-                
-                ''' Create merged coord and replace the [j+1] coord with it for 
-                    the next loop when [j+1] is compared to [j+2] '''
-
-                merged_coord = Coordinate(x = x_new, y = y_new)
+                # Call the midpoint function
+                merged_coord = midpoint(x_values[j], x_values[j+1], 0.5)
                 x_values[j+1] = merged_coord
                 merged_list.append(merged_coord)
 
@@ -98,16 +170,16 @@ def merge_points(points):
 
             else:
                 if merged == False:
-                    ''' If the y check failed, and the [j] element
-                        isn't a merged one, then replace it with the original'''
+                        #If the y check failed, and the [j] element
+                        #isn't a merged one, then replace it with the original
                     org_coord = x_values[j]
                     merged_list.append(org_coord)
 
                     # Set status to false
                     merged = False
                 else:
-                    ''' If [j] element was merged, then no need to
-                        append it so just change the status'''
+                    #If [j] element was merged, then no need to
+                    #append it so just change the status
                     merged = False
 
         
@@ -125,9 +197,16 @@ def merge_points(points):
         org_coord = x_values[-1]
         merged_list.append(org_coord)
 
-    return(merged_list)
+    merge_data = {'list': merged_list, 'multiplier': multiplier}
+    return(merge_data)
 
-def plot_map(list):
+def plot_centre(data):
+    multiplier = data['multiplier']
+    list = data['list']
+
+    # Multiplier triples to increase merging and reduce recursive calls
+    multiplier *= 3
+
     # List is the merged list
     east = list[-1]
     west = list[0]
@@ -136,21 +215,120 @@ def plot_map(list):
     north = list[-1]
     south = list[0]
 
-    print('North: ', north)
-    print('South: ', south)
-    print('East: ', east)
-    print('West: ', west)
+    points = [north, south, east, west]
+ 
+    points = duplicate(points)
+
+    if len(points) == 2:
+        # Straight line
+        intersection = midpoint(points[0], points[1], 0.5)
+
+        for item in list:
+            if item in points:
+                list.remove(item)
+
+    if len(points) == 1:
+        # Only one remaining
+        intersection = points[0]
+
+        for item in list:
+            if item in points:
+                list.remove(item)
+
+
+    if len(points) == 3:
+        # Triangle
+        AB = midpoint(points[0], points[1], 0.5)
+        BC = midpoint(points[1], points[2], 0.5)
+        AC = midpoint(points[0], points[2], 0.5)
+
+        for item in list:
+            if item in points:
+                list.remove(item)
+        
+        points = [AB, BC, AC]
+
+        intersection = plot_centre(merge_points(points, multiplier))
+
+
+    if len(points) == 4:
+        # Quadrilateral
+        NS = midpoint(points[0], points[1], 0.5)
+        EW = midpoint(points[2], points[3], 0.5)
+
+        intersection = midpoint(NS, EW, 0.5)
+
+        for item in list:
+            if item in points:
+                list.remove(item)
+
+    
+    if len(list) < 1:
+        return intersection
+
+    else:
+        list.append(intersection)
+        list = insertion_sort(list, 'x')
+        # Greater mutliplier to merge points more easily for simplicity and speed
+        data = merge_points(list, multiplier)
+        intersection = plot_centre(data)
+
+        return intersection
+
+
+
+
+def midpoint(a, b, ratio):
+    if not (0 < ratio < 1):
+        return AssertionError('Ratio invalid')
+    # If ratio is 0.2 (20%) a is considered the one with greater weightage
+    # Hence a is 0.8 and b is 0.2
+    x1 = float(a['x'])
+    x2 = float(b['x'])
+    y1 = float(a['y'])
+    y2 = float(b['y'])
+
+    x_mid = ((1-ratio) * x1) + (ratio * x2)  
+    y_mid = ((1-ratio) * y1) + (ratio * y2)
+
+    mid_coord = Coordinate(x = x_mid, y = y_mid)
+
+    return(mid_coord)
+    
+
+def duplicate(list):
+     # Create list with only north and south
+    filter_list = [list[0], list[1]]
+    # Set the values to true. If they become false, they won't be added to the filtered list.
+    # East and west check work on the basis that east and west are list[2] and list[3] respectively
+    east_check = True
+    west_check = True
+    # Counter j
+    j = 2
+    for i in range(2):
+        if list[i] == list[i+j]:
+            east_check = False
+
+        if list[i] == list[i+j+1]:
+            west_check = False
+        
+        j -= 1
+
+    if east_check == True:
+        filter_list.append(list[2])
+    if west_check == True:
+        filter_list.append(list[3])
+
+    return(filter_list)
 
 
 # Run the program
-merged_list = merge_points(points)
-plot_map(merged_list)
+data = merge_points(points, 0.05)
+middle = plot_centre(data)
+x = middle['x']
+y = middle['y']
+print(f'Coordinates are: ({x}, {y})')
 
-'''
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-NO NEED FOR Y_LIST TO EXIST, CAN BE SIMPLIFIED TO JUST FINDING
-THE EXTREMES FOR Y. X_LIST IS NEEDED SINCE IT IS USED TO MERGE
-ELEMENTS, BUT Y HENCE IS NOT REQUIRED. CAN SIMPLIFY CODE THERE.
 
 '''
 
@@ -164,7 +342,7 @@ ELEMENTS, BUT Y HENCE IS NOT REQUIRED. CAN SIMPLIFY CODE THERE.
     # Once one 5% less is found, no need to check the other axis, as merging will ensure to merge points completely anyways if other axis is also 5%
     # Update new number of points, while also updating new extreme values
 
-# PLOT MAP
+# PLOT CENTRE
     # Draw lines intersecting NS and EW points to find a midpoint of a quadrilateral.
     # If one point acts as two extremes (i.e NW, SW, NE, SE), draw a triangle.
     # If two points act as two extremes, draw a straight line between the two.
@@ -197,71 +375,6 @@ ELEMENTS, BUT Y HENCE IS NOT REQUIRED. CAN SIMPLIFY CODE THERE.
 # Correct uses Form.
 
 
-
-            
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''
-equation_1 = ( ((b[0]-x)**2 + (b[1]-y)**2) - ((a[0]-x)**2 + (a[1]-y)**2))
-equation_2 = ( ((c[0]-x)**2 + (c[1]-y)**2) - ((a[0]-x)**2 + (a[1]-y)**2))
-
-equation_1 = simplify(equation_1)
-equation_2 = simplify(equation_2)
-
-const1 = -int(equation_1.coeff(x,0)- y*equation_1.coeff(y,1))
-const2 = -int(equation_2.coeff(x,0)- y*equation_2.coeff(y,1))
-
-x1 = int(equation_1.coeff(x,1))
-y1 = int(equation_1.coeff(y,1))
-
-x2 = int(equation_2.coeff(x,1))
-y2 = int(equation_2.coeff(y,1))
-
-
-A = np.array([[x1, y1], [x2, y2]])
-
-
-B = np.array([const1, const2])
-
-
-ans = np.linalg.solve(A,B)
-
-
-rad = ( ((a[0]-ans[0]) ** 2) + ((a[1]-ans[1]) ** 2) )
-
-
-final = f'(x - {ans[0]}) ** 2 + (y - {ans[1]}) ** 2 = {rad}'
-print(final)
-'''
 
 
 
