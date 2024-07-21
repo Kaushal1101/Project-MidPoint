@@ -1,0 +1,100 @@
+ html, body {
+    height: 100%;
+    width: 100%;
+    margin-top: 2%;
+
+    text-align: center;
+  }
+  
+  gmp-map {
+    height: 80%;
+    width: 80%;
+    margin: auto;
+  }
+
+  gmp-map:not(:defined) {
+    display: none;
+  }
+  
+  #infowindow-content {
+    display: none;
+  }
+  
+  
+  #place-picker {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0.5rem 1rem 1rem;
+  }
+
+  .content {
+    border: solid;
+    border-width: 5px;
+    border-radius: 5px;
+    border-color: silver;
+    padding: 10px;
+    margin: 10px;
+    background-color: white;
+  }
+
+  p, b {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+
+  body {
+    background-color: #294D6B !important;
+  }
+
+  h1, h3 {
+    color: white;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+
+  ul {
+    list-style-type: none;
+  }
+
+  .place-picker {
+    display: inline-block;
+    border: solid;
+    border-color: lightseagreen;
+    border-radius: 5px;
+    margin-right: 7px;
+    margin-top: 7px;
+  }
+
+  #place-picker-2, #place-picker-1 {
+    margin-right: 3.3px;
+  }
+
+  gmp-map {
+    border: solid;
+    border-width: 10px;
+    border-color: white;
+    border-radius: 15px;
+  }
+
+  #index-content {
+    margin: auto;
+    text-align: center;
+    align-items: center;
+
+  }
+
+  #select {
+    margin-left: 44.5%;
+  }
+
+  #show-places {
+    width: 75%;
+    margin: auto;
+    border: solid;
+    border-color: gray;
+    border-radius: 20px;
+    border-width: 5px;
+  }
+
+  #name-input {
+    width: 60%;
+    margin-left: 41%;
+  }

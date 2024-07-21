@@ -1,0 +1,11 @@
+{% extends plotter/layout.html %}
+
+{% block body %}
+
+<div id="navbar">
+    <button class="btn btn-sm btn-outline-light" id="index">Home</button>
+    <a class="btn btn-sm btn-outline-light" href="{% url 'plotter:places' %}" >{{request.user}}'s Places</a>
+    <a class="btn btn-sm btn-outline-light" href="{% url 'plotter:logout' %}">Log Out</a><br><br>
+</div>
+
+{% endblock %}

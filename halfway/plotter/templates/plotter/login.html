@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <title>Halfway: Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+
+<body>
+    <h2>Login to Halfway</h2><br><br>
+
+    {% if message %}
+        <div><h4>{{ message }}</h4></div>
+    {% endif %}
+
+    <style>
+
+        body {
+            background-color: #294D6B;
+        }
+
+        h2, h4, p {
+            margin-top: 10%;
+            color: white;
+            text-align: center;
+        }
+
+        .form-group {
+            width: 40%;
+            margin: auto;
+        }
+
+    </style>
+
+    <form action="{% url 'plotter:login' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <input class="form-control" type="username" name="username" placeholder="Username">
+        </div><br>
+        <div class="form-group">
+            <input class="form-control" type="password" name="password" placeholder="Password">
+        </div><br>
+        <input class="btn btn-light" style="margin-left: 47%;" type="submit" value="Login">
+    </form><br>
+
+    <p>Don't have an account? <a href="{% url 'plotter:register' %}">Register here.</a></p>
+</body>
+</html>

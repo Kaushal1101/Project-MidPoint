@@ -1,0 +1,182 @@
+{% extends "plotter/layout.html" %}
+
+{% block body %}
+
+<div id="navbar">
+  <button class="btn btn-sm btn-outline-light" id="index" style="height:45px; width: 200px">Home</button>
+  <button class="btn btn-sm btn-outline-light" id="places" style="height:45px; width: 200px">{{request.user}}'s Places</button>
+  <a class="btn btn-sm btn-outline-light" href="{% url 'plotter:logout_view' %}" style="height:45px; width: 200px; padding-top: 11px;">Log Out</a><br><br><br>
+</div>
+
+<style>
+  .hidden {
+    display: none;
+  }
+</style>
+
+<div id="index-content" style="width: 100%; height: 100%">
+  <h1 style="font-family: monospace">Meet Halfway!</h1>
+  
+  <gmpx-api-loader
+    key="AIzaSyBkZPjU2wlKG0goYDPx23xno37sCM42AJI"
+    solution-channel="GMP_CCS_autocomplete_v4">
+  </gmpx-api-loader>
+  
+  <input type="hidden" id="use-strict-bounds" value="true" />
+
+  <br>
+
+  <div id="saved-buttons">
+  </div><br>
+
+  <gmp-map style="align-items: center;" id="map" center="1.35170569928771, 103.81223150749379" zoom="10.8" map-id="476483309b0ec620">
+    <gmp-advanced-marker id="marker"></gmp-advanced-marker>
+  </gmp-map>
+
+  <br>
+  
+  <div id="infowindow-content">
+    <span id="place-name" class="title" style="font-weight: bold;"></span><br />
+    <span id="place-address"></span>
+  </div>
+
+  <div id="new-inputs">
+    <gmpx-place-picker class="place-picker" id="place-picker-1" for-map="map" required></gmpx-place-picker> 
+
+  </div><br><br>
+
+  <div id="all-buttons">
+    <button class = "btn btn-outline-light" style="margin-right: 10px;" onclick="createNewInputFields()">Add Address</button>
+    <button class = "btn btn-outline-light" onclick="deleteInputFields()">Delete Address</button>
+    <br><br><br>
+    <form id='select'>
+      <select id="filter" class="form-select" aria-label="filter" style="width: 20%">
+        <option selected>Filter</option>
+        <option value="restaurant">Restaurants</option>
+        <option value="park">Parks</option>
+        <option value="bar">Bars</option>
+        <option value="subway_station">MRT</option>
+        <option value="shopping_mall">Mall</option>
+        <option value="night_club">Nightclub</option>
+        <option value="tourist_attraction">Attractions</option>
+        <option value="gym">Gym</option>
+        <option value="stadium">Stadium</option>
+        <option value="library">Library</option>
+      </select>
+    </form><br>
+
+    <div id="button-coords" class="hidden">
+      <p id="lat-sum">0</p>
+      <p id="lng-sum">0</p>
+      <p id="total">0</p>
+    </div>
+  </div>
+  
+  
+  <br>
+  <button class = "btn btn-light" onclick="sendData()">Find Midpoint</button><br><br>
+  <br><br>
+  
+  <div id="results" style="display: none; width: 80%; margin-left: 10%;">
+  </div>
+
+</div>
+
+
+<div id="places-content" class="hidden">
+  <h1>{{request.user}}'s Places</h1>
+  <br><br>
+  <div id="show-places">
+
+  </div><br><br>
+  <h3>Add Place</h3><br>
+  <form id="name-input">
+    <input type="text" class="form-control" style="width:30%; margin: left;" id="new-name" placeholder="Name (Eg Home, Work)">
+  </form><br><br><br>
+  <gmpx-place-picker id="new-address" for-map="map" placeholder="Enter a place to see its address"></gmpx-place-picker><br>
+  <br><button class="btn btn-light" onclick="add_place()">Add Place</button><br><br>
+  <br>
+</div>
+{% endblock %}
+
+
+
+<!--
+DYNAMICALLY ADD INPUTS WITH BUTTON
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+</head>
+<body>
+
+<div id="new-input-container">
+	<input type="text" class="newInput">
+</div>
+<button onclick="createNewInputFields()">Add New</button>
+
+<script>
+
+function createNewInputFields() {
+  var container = document.getElementById('new-input-container');
+  newDiv = document.createElement("div");
+  
+  const newElem = document.createElement("input");
+  newElem.setAttribute("type", "text");
+  newElem.setAttribute("class", "newInput");
+	
+  newDiv.appendChild(newElem);
+  
+  container.appendChild(newDiv);
+}
+
+</script>
+
+<style>
+
+.newInput {
+	margin-bottom: 10px;
+    border-color: blue;
+}
+
+</style>
+
+</body>
+</html>
+
+-->
+
+
+<!--
+
+TO LOOP THE ADD EVENT LISTENER 
+
+  for (var i = 0; i < placePicker.length; i++) {
+    	placePicker[i].addEventListener('gmpx-placechange', () => {
+        console.log('RAHHH');
+        var place = placePicker.value;
+
+        if (!place.location) {
+          window.alert(
+            "No details available for input: '" + place.name + "'"
+          );
+          infowindow.close();
+          marker.position = null;
+          return;
+        }
+
+        if (place.viewport) {
+          map.innerMap.fitBounds(place.viewport);
+        } else {
+          map.center = place.location;
+          map.zoom = 17;
+        }
+
+        marker.position = place.location;
+        infowindowContent.children["place-name"].textContent = place.displayName;
+        infowindowContent.children["place-address"].textContent = place.formattedAddress;
+        infowindow.open(map.innerMap, marker);
+  }); 
+}
+-->
